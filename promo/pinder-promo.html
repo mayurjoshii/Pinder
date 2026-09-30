@@ -82,6 +82,31 @@
   #end .pills { display: flex; gap: 22px; margin-top: 48px; font-family: var(--mono); font-size: 26px; }
   #end .pill { padding: 14px 26px; border-radius: 99px; border: 2px solid rgba(255,255,255,.2); color: var(--muted); }
   #end .pill b { color: var(--text); }
+
+  /* ---------- mock Mac desktop ---------- */
+  #mac { position: absolute; inset: 0; z-index: 90; opacity: 0; overflow: hidden; font-family: var(--display); }
+  #wall { position: absolute; inset: -40px; }
+  #menubar { position: absolute; left: 0; right: 0; top: 0; height: 38px; background: rgba(20,16,22,.55); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: space-between; padding: 0 22px; font-size: 19px; color: #f5efe6; }
+  #menubar .l span { margin-right: 26px; } #menubar .l span:first-child { font-weight: 800; }
+  #dock { position: absolute; bottom: 14px; left: 50%; height: 124px; border-radius: 34px; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.28); backdrop-filter: blur(24px); }
+  .di { position: absolute; bottom: 14px; width: 96px; height: 96px; transform-origin: 50% 100%; }
+  .di svg, .di img { width: 100%; height: 100%; display: block; }
+  .di .run { position: absolute; left: 44px; bottom: -11px; width: 8px; height: 8px; border-radius: 50%; background: #fff; opacity: 0; }
+  .dsep { position: absolute; bottom: 20px; width: 2px; height: 84px; background: rgba(255,255,255,.35); }
+  .dfile { position: absolute; width: 150px; text-align: center; font-size: 16px; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.6); }
+  .dfile .ic { width: 84px; height: 104px; margin: 0 auto 8px; border-radius: 6px; background: #f3f3f6; box-shadow: 0 4px 12px rgba(0,0,0,.35); position: relative; overflow: hidden; }
+  #macCap { position: absolute; left: 0; right: 0; top: 96px; text-align: center; font-size: 64px; font-weight: 800; letter-spacing: -2px; color: #fff; text-shadow: 0 6px 30px rgba(0,0,0,.45); }
+  #win { position: absolute; left: 360px; top: 150px; width: 1200px; height: 740px; border-radius: 22px; overflow: hidden; background: #111; box-shadow: 0 50px 120px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.12); transform-origin: 0 0; }
+  #win .bar { position: absolute; left: 0; right: 0; top: 0; height: 48px; display: flex; gap: 12px; align-items: center; padding-left: 22px; z-index: 2; }
+  #win .bar i { width: 16px; height: 16px; border-radius: 50%; display: block; }
+  #win .mesh { position: absolute; width: 800px; height: 800px; border-radius: 50%; filter: blur(90px); opacity: .5; }
+  #win .body { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; font-family: -apple-system, 'Bricolage Grotesque', sans-serif; }
+  #win .body img { width: 120px; margin-bottom: -6px; }
+  #win .body h1 { font-size: 84px; font-weight: 800; letter-spacing: -2px; color: #fff; }
+  #win .body .sub { font-size: 30px; color: #888; margin-top: -14px; }
+  #win .body .btn { margin-top: 10px; padding: 18px 40px; border-radius: 14px; background: #fff; color: #111; font-size: 28px; font-weight: 600; }
+  #win .body .hint { font-size: 22px; color: #555; font-family: var(--mono); }
+  #cursor { position: absolute; left: 0; top: 0; width: 40px; height: 40px; z-index: 5; transform-origin: 4px 4px; }
 </style>
 </head>
 <body>
@@ -126,6 +151,34 @@
       <div class="pill"><b>Photos</b>, videos &amp; PDFs</div>
       <div class="pill">Nothing deleted until <b>you confirm</b></div>
     </div>
+  </div>
+
+  <div id="mac">
+    <div id="wall"><svg width="100%" height="100%" viewBox="0 0 2000 1160" preserveAspectRatio="none">
+      <defs><linearGradient id="wsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d3b5a"/><stop offset=".55" stop-color="#e0785a"/><stop offset="1" stop-color="#f5b36b"/></linearGradient></defs>
+      <rect width="2000" height="1160" fill="url(#wsky)"/>
+      <path d="M0 700 C400 560 700 760 1100 640 S1700 560 2000 650 V1160 H0Z" fill="#b8506a" opacity=".85"/>
+      <path d="M0 820 C500 700 900 900 1300 780 S1800 740 2000 800 V1160 H0Z" fill="#6a2c5c"/>
+      <path d="M0 960 C400 880 1000 1010 1400 930 S1850 900 2000 940 V1160 H0Z" fill="#2c1638"/>
+    </svg></div>
+    <div id="menubar"><div class="l"><span>Finder</span><span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Window</span><span>Help</span></div><div>Tue 9:41 AM</div></div>
+    <div id="dfiles"></div>
+    <div id="macCap">Open Pinder on your Mac</div>
+    <div id="dock"></div>
+    <div id="win">
+      <div class="mesh" style="left:-200px;top:-300px;background:radial-gradient(circle,#f9a634,transparent 70%)"></div>
+      <div class="mesh" style="right:-250px;bottom:-350px;background:radial-gradient(circle,#e7473f,transparent 70%)"></div>
+      <div class="mesh" style="left:300px;bottom:-500px;background:radial-gradient(circle,#2fd8c9,transparent 70%);opacity:.3"></div>
+      <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div>
+      <div class="body">
+        <img src="icon.png" alt="">
+        <h1>Pinder</h1>
+        <div class="sub">Swipe away the gigabytes.</div>
+        <div class="btn">Open Folder</div>
+        <div class="hint">← delete &nbsp; → keep &nbsp; Z undo</div>
+      </div>
+    </div>
+    <svg id="cursor" viewBox="0 0 24 24"><path d="M3 2 L3 19 L7.5 14.8 L10.4 21.2 L13.2 20 L10.3 13.8 L16.4 13.8Z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
   </div>
   <div id="vignette"></div>
 </div>
@@ -175,7 +228,7 @@ for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
 // ---------- build deck ----------
 // order: top card first
 const deckDef = [
-  { scene: 'sunset', meta: ['IMG_2041.jpg', '4.2 MB'], dir: 1, t0: 3.95 },
+  { scene: 'sunset', meta: ['IMG_2041.jpg', '4.2 MB'], dir: 1, t0: 4.05 },
   { scene: 'blurry', meta: ['IMG_2042.jpg', '3.9 MB'], dir: -1, t0: 4.75 },
   { scene: 'screenshot', meta: ['Screenshot 14.png', '2.1 MB'], dir: -1, t0: 5.35 },
   { scene: 'beach', meta: ['IMG_3310.jpg', '5.0 MB'], dir: 1, t0: 7.05, dup: true },
@@ -206,6 +259,98 @@ const conf = Array.from({ length: 110 }, () => {
   const a = rnd() * Math.PI * 2, v = 700 + rnd() * 1300;
   return { el, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 700, spin: (rnd() - .5) * 1400, s: .6 + rnd() * .8 };
 });
+
+
+// ---------- mock Mac desktop ----------
+const dockIcon = (bg, glyph) => `<svg viewBox="0 0 100 100"><defs><linearGradient id="g${bg.replace(/#/g,'')}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${bg.split(',')[0]}"/><stop offset="1" stop-color="${bg.split(',')[1]}"/></linearGradient></defs><rect x="4" y="4" width="92" height="92" rx="22" fill="url(#g${bg.replace(/#/g,'')})"/>${glyph}</svg>`;
+const DOCK = [
+  dockIcon('#5ac8fa,#1e6fd9', '<rect x="26" y="30" width="48" height="40" rx="6" fill="#fff" opacity=".9"/><rect x="26" y="30" width="48" height="10" rx="4" fill="#cfe6ff"/>'),
+  dockIcon('#ffffff,#dfe3ea', '<circle cx="50" cy="50" r="28" fill="none" stroke="#2f7cf6" stroke-width="6"/><path d="M50 30 L57 50 L50 70 L43 50Z" fill="#ff3b30"/>'),
+  dockIcon('#6fc3ff,#2a7de1', '<path d="M24 34 H76 V68 H24Z" fill="#fff"/><path d="M24 34 L50 54 L76 34" stroke="#2a7de1" stroke-width="4" fill="none"/>'),
+  dockIcon('#ffffff,#eef0f4', '<g transform="translate(50 50)">' + ['#ff9f0a','#ffd60a','#34c759','#30b0c7','#5e5ce6','#ff375f'].map((c,i)=>`<ellipse rx="9" ry="18" cy="-14" fill="${c}" opacity=".85" transform="rotate(${i*60})"/>`).join('') + '</g>'),
+  dockIcon('#ff6482,#fa2d48', '<path d="M42 28 L68 22 V62" stroke="#fff" stroke-width="6" fill="none"/><circle cx="38" cy="66" r="9" fill="#fff"/><circle cx="62" cy="62" r="9" fill="#fff"/>'),
+  dockIcon('#9ea4ad,#5f656e', '<circle cx="50" cy="50" r="22" fill="none" stroke="#e8eaee" stroke-width="10" stroke-dasharray="8 6"/><circle cx="50" cy="50" r="9" fill="#e8eaee"/>'),
+  'SEP',
+  '<img src="icon.png" alt="Pinder">',
+  'SEP',
+  dockIcon('#d9dde3,#b3b8c0', '<path d="M32 32 H68 L64 76 H36Z" fill="none" stroke="#6b7079" stroke-width="4"/><path d="M28 32 H72" stroke="#6b7079" stroke-width="4"/>'),
+];
+const DI = 96, DG = 14;
+let dx = 16; const dockItems = [];
+DOCK.forEach((h) => {
+  if (h === 'SEP') { const e = document.createElement('div'); e.className = 'dsep'; e.style.left = (dx + 4) + 'px'; $('#dock').appendChild(e); dx += 10 + DG; return; }
+  const e = document.createElement('div'); e.className = 'di'; e.innerHTML = h + '<div class="run"></div>';
+  e.style.left = dx + 'px'; $('#dock').appendChild(e);
+  dockItems.push({ el: e, x: dx }); dx += DI + DG;
+});
+const DOCK_W = dx - DG + 16;
+$('#dock').style.width = DOCK_W + 'px';
+$('#dock').style.marginLeft = (-DOCK_W / 2) + 'px';
+const dockLeft = 960 - DOCK_W / 2;
+const pinderDock = dockItems[6];
+const PX = dockLeft + pinderDock.x + DI / 2, PY = 1080 - 14 - 14 - DI / 2;
+// cluttered desktop files
+['Screenshot 2025-03-02.png', 'Screenshot 2025-03-02 (2).png', 'IMG_4411.HEIC', 'IMG_4411 copy.HEIC'].forEach((n, i) => {
+  const e = document.createElement('div'); e.className = 'dfile';
+  e.style.right = '30px'; e.style.top = (70 + i * 170) + 'px';
+  e.innerHTML = `<div class="ic">${scenes[i < 2 ? 'screenshot' : 'dog']}</div>${n}`;
+  $('#dfiles').appendChild(e);
+});
+
+const MAC0 = 3.28125; // video time the desktop appears
+function renderMac(v) {
+  const m = v - MAC0;
+  const mac = $('#mac');
+  if (m < -0.01 || m > 3.8) { mac.style.opacity = 0; return; }
+  mac.style.opacity = eOut(prog(m, 0, 0.35)) * (1 - prog(m, 3.4, 3.75));
+  $('#wall').style.transform = `scale(${1.08 - 0.08 * eOut(prog(m, 0, 1))})`;
+  $('#menubar').style.transform = `translateY(${-40 * (1 - eOut(prog(m, 0.1, 0.45)))}px)`;
+  $('#dock').style.transform = `translateY(${160 * (1 - eOut(prog(m, 0.15, 0.55)))}px)`;
+  const capIn = eOut(prog(m, 0.3, 0.6)), capOut = prog(m, 1.7, 1.95);
+  set($('#macCap'), capIn * (1 - capOut), `translateY(${(1 - capIn) * 20}px)`);
+  $('#dfiles').style.opacity = eOut(prog(m, 0.2, 0.5));
+
+  // cursor path
+  const cx0 = 1300, cy0 = 520, bx = 960, by = 150 + 740 / 2 + 150;
+  let cx, cy;
+  if (m < 1.1) { const p = eInOut(prog(m, 0.35, 1.1)); cx = lerp(cx0, PX + 6, p); cy = lerp(cy0, PY - 6, p); }
+  else { const p = eInOut(prog(m, 2.3, 2.95)); cx = lerp(PX + 6, bx + 8, p); cy = lerp(PY - 6, by + 4, p); }
+  const clickA = Math.max(0, 1 - Math.abs(m - 1.17) / 0.08), clickB = Math.max(0, 1 - Math.abs(m - 3.047) / 0.08);
+  const cur = $('#cursor');
+  cur.style.opacity = prog(m, 0.3, 0.4) * (1 - prog(m, 3.15, 3.25));
+  cur.style.transform = `translate(${cx - 4}px, ${cy - 4}px) scale(${1 - 0.18 * Math.max(clickA, clickB)})`;
+
+  // dock magnification + launch bounce
+  const magOn = cy > 850 ? 1 : 0;
+  dockItems.forEach((d) => {
+    const c = dockLeft + d.x + DI / 2;
+    const k = magOn * Math.max(0, 1 - Math.abs(cx - c) / 220);
+    let yb = 0;
+    if (d === pinderDock) {
+      const b = prog(m, 1.2, 1.875);
+      yb = b > 0 && b < 1 ? -Math.abs(Math.sin(b * Math.PI * 2)) * 44 * (1 - b * .4) : 0;
+      d.el.querySelector('.run').style.opacity = prog(m, 1.3, 1.4);
+    }
+    d.el.style.transform = `translateY(${yb}px) scale(${1 + 0.45 * k})`;
+  });
+
+  // app window: zooms out of the dock icon, then goes full screen
+  const w = $('#win');
+  const op = eOut(prog(m, 1.875, 2.3));
+  const fs = eInOut(prog(m, 3.1, 3.5));
+  if (m < 1.875) { w.style.opacity = 0; }
+  else {
+    const s0 = 0.08, ox = PX - 360 - 600 * s0, oy = PY - 150 - 370 * s0;
+    const sc = lerp(s0, 1, op), tx = lerp(ox, 0, op), ty = lerp(oy, 0, op);
+    const fsS = lerp(1, 1920 / 1200, fs), fsX = lerp(0, -360, fs), fsY = lerp(0, -150 - (740 * 1920 / 1200 - 1080) / 2, fs);
+    w.style.opacity = Math.min(1, op * 3);
+    w.style.transform = `translate(${tx + fsX}px, ${ty + fsY}px) scale(${sc * fsS})`;
+    w.style.borderRadius = (22 * (1 - fs)) + 'px';
+    const pressed = Math.max(0, 1 - Math.abs(m - 3.06) / 0.12);
+    w.querySelector('.btn').style.transform = `scale(${1 - 0.06 * pressed})`;
+    w.querySelector('.body').style.opacity = 1 - prog(m, 3.15, 3.4);
+  }
+}
 
 // ---------- render(t) ----------
 function render(t) {
@@ -240,7 +385,7 @@ function render(t) {
   const lIn = prog(t, 2.65, 3.1), lMove = eInOut(prog(t, 3.55, 4.0));
   const ls = (lIn === 0 ? 0 : eBack(lIn));
   const logo = $('#logo');
-  logo.style.opacity = lIn > 0 ? 1 - prog(t, 3.75, 3.95) : 0;
+  logo.style.opacity = 0; // brand reveal now happens in the Mac app window
   logo.style.transformOrigin = '960px 540px';
   logo.style.transform = `translateY(${lMove * -380}px) scale(${lerp(.6 + .4 * ls, .45, lMove)})`;
   $('#logo .tag').style.opacity = eOut(prog(t, 2.95, 3.3));
@@ -303,7 +448,7 @@ function render(t) {
   const pVis = panelIn * (1 - panelOut + panelBack) * (1 - deckOut);
   set($('#keys'), pVis, `translateX(${(1 - panelIn) * 60}px)`);
   set($('#freed'), pVis, `translateX(${(1 - panelIn) * 60}px)`);
-  keyPress($('#kr'), [3.8, 6.9], 'rgb(52,199,89)');
+  keyPress($('#kr'), [3.9, 6.9], 'rgb(52,199,89)');
   keyPress($('#kl'), [4.6, 5.2], 'rgb(255,59,48)');
   const freed = 3.9 * eOut(prog(t, 4.95, 5.3)) + 2.1 * eOut(prog(t, 5.55, 5.9)) + 5.0 * eOut(prog(t, 6.75, 7.1));
   $('#freed .v').textContent = freed.toFixed(1) + ' MB';
@@ -327,7 +472,19 @@ function render(t) {
   const pillsIn = eOut(prog(t, 9.2, 9.55));
   set($('#end .pills'), pillsIn, `translateY(${(1 - pillsIn) * 20}px)`);
 }
+// Video timeline (16s) -> scene time (10s). Keyframes sit on a 128 BPM beat
+// grid (0.46875s) so the app launch, swipe drop, payoff and end card land on
+// beats; the same table lives in music.py. 3.28-7.03s is the Mac desktop scene.
+const TIMEMAP = [[0, 0], [2.8125, 2.2], [3.28125, 2.9], [7.03125, 3.55], [10.3125, 5.85], [12.65625, 7.6], [14.0625, 8.9], [16, 10]];
+function sceneTime(v) {
+  for (let i = 1; i < TIMEMAP.length; i++) {
+    const [v0, s0] = TIMEMAP[i - 1], [v1, s1] = TIMEMAP[i];
+    if (v <= v1) return s0 + (s1 - s0) * (v - v0) / (v1 - v0);
+  }
+  return 10;
+}
 window.render = render;
+window.renderVideo = (v) => { render(sceneTime(v)); renderMac(v); };
 render(0);
 </script>
 </body>

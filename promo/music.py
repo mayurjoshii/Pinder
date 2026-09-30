@@ -1,8 +1,9 @@
 """Synthesizes the promo soundtrack (promo/pinder-promo.wav).
 
-Upbeat 133 BPM track. The beat grid is phased so downbeats land on the key
-visual moments in pinder-promo.html (logo reveal 2.65s, payoff 7.6s,
-end card ~8.9s), and one-shot SFX sit on each swipe/transition.
+Upbeat 128 BPM track, 16s. pinder-promo.html maps video time to scene time
+with TIMEMAP (same table below), whose keyframes sit on this beat grid so the
+app launch, swipe drop, payoff and end card land on beats. One-shot SFX sit on each
+swipe/transition, placed via v(scene_time).
 
     python3 promo/music.py
 """
@@ -10,10 +11,22 @@ import wave
 import numpy as np
 
 SR = 44100
-DUR = 10.0
+DUR = 16.0
 N = int(SR * DUR)
-BEAT = 0.45            # 133.3 BPM
-PHASE = 2.65 - 5 * BEAT  # a beat lands exactly on 2.65s
+BEAT = 0.46875         # 128 BPM
+PHASE = 0.0
+TIMEMAP = [(0, 0), (2.8125, 2.2), (3.28125, 2.9), (7.03125, 3.55), (10.3125, 5.85), (12.65625, 7.6), (14.0625, 8.9), (16, 10)]
+MAC = 3.28125           # Mac desktop scene starts (see renderMac in the HTML)
+LAUNCH = MAC + 1.875    # app window opens
+DECK, PAYOFF, END = 7.03125, 12.65625, 14.0625
+
+
+def v(scene_t):
+    """Scene time (as used in pinder-promo.html render()) -> video time."""
+    for (v0, s0), (v1, s1) in zip(TIMEMAP, TIMEMAP[1:]):
+        if scene_t <= s1:
+            return v0 + (v1 - v0) * (scene_t - s0) / (s1 - s0)
+    return DUR
 rng = np.random.default_rng(3)
 mix = np.zeros(N)
 
@@ -144,7 +157,7 @@ def chord_at(t):
 
 
 def groove_on(t):
-    return (0.3 <= t < 2.2) or (3.55 <= t < 8.85)
+    return (v(0.3) <= t < v(2.2)) or (DECK <= t < END - 0.05)
 
 
 # drums + bass
@@ -162,8 +175,15 @@ for b in beats:
             add(hat(open_=half == 0.5), t, 0.5 if half else 0.3)
             add(bass(chord_at(t)[0], BEAT * 0.48), t, 0.8)
 
-# snare roll into the logo reveal and into the payoff
-for start, end in ((1.75, 2.65), (7.15, 7.6)):
+# Mac scene: lighter pulse (offbeat hats) once the app is open
+t = LAUNCH
+while t < DECK - 2 * BEAT:
+    add(hat(open_=True), t + BEAT / 2, 0.35)
+    add(bass(chord_at(t)[0], BEAT * 0.9), t, 0.4)
+    t += BEAT
+
+# snare roll into the swipe drop and into the payoff
+for start, end in ((DECK - 2 * BEAT, DECK), (PAYOFF - 2 * BEAT, PAYOFF)):
     t, k = start, 0
     while t < end - 0.01:
         add(clap(), t, 0.25 + 0.45 * (t - start) / (end - start))
@@ -176,48 +196,56 @@ while bar_t < DUR:
     s = max(0.0, bar_t)
     d = min(bar_t + BAR, DUR) - s
     if d > 0.01:
-        cut = 900 if s < 3.55 else 2600
+        cut = 900 if s < DECK else 2600
         seg = supersaw(chord_at(s + 0.01)[1], d, cut)
         i = int(s * SR)
         pad[i:i + len(seg)] += seg[: N - i]
     bar_t += BAR
 tt = np.arange(N) / SR
 pump = 1 - 0.65 * np.exp(-((tt - PHASE) % BEAT) / 0.09)
-pad_gain = np.where(tt < 0.3, tt / 0.3, 1.0) * np.where(tt > 8.9, np.exp(-(tt - 8.9) * 1.6), 1.0)
+pad_gain = np.where(tt < 0.3, tt / 0.3, 1.0) * np.where(tt > END, np.exp(-(tt - END) * 0.9), 1.0)
 mix += pad * pump * pad_gain * 0.55
 
-# 16th-note arp over the swipe section and payoff
-t = 3.55
-while t < 8.85:
+# 16th-note arp from the app launch through the payoff
+t = LAUNCH
+while t < END - 0.05:
     chord = chord_at(t)[1]
-    step = int(round((t - 3.55) / (BEAT / 4)))
+    step = int(round((t - LAUNCH) / (BEAT / 4)))
     f = chord[[0, 1, 2, 1][step % 4]] * (2 if step % 8 >= 4 else 1) * 2
-    add(pluck(f), t, 0.45 if t > 7.6 else 0.3)
+    add(pluck(f), t, 0.45 if t > PAYOFF else 0.3 if t > DECK else 0.18)
     t += BEAT / 4
 
 # tiles popping in: little blips
-for i, t in enumerate(np.linspace(0.12, 1.2, 12)):
+for i, t in enumerate(np.linspace(v(0.12), v(1.2), 12)):
     add(pluck(note([3, 7, 10, 15][i % 4])), t, 0.18)
 
 # ---------- SFX synced to picture ----------
-add(riser(1.25), 1.4, 0.8)                     # tiles collapse
-add(impact(), 2.65, 1.0)                       # logo reveal
-add(whoosh(0.5, 300, 4000, 0.5), 3.55)         # logo up, deck in
-for t0 in (3.95, 4.75, 5.35, 7.05):            # card swipes
-    add(whoosh(0.45, 600, 7000), t0 - 0.12)
-for tk in (3.8, 4.6, 5.2, 6.9):                # arrow key presses
-    add(click(), tk, 0.6)
-add(whoosh(0.35, 1500, 5000, 0.35), 5.95)      # duplicate twin slides out
-add(whoosh(0.4, 5000, 400, 0.55), 6.6)         # twin dropped in trash
-add(impact(), 7.6, 1.0)                        # "GB freed"
+add(whoosh(0.55, 400, 6000, 0.6), v(2.2) - 0.05)    # tiles collapse
+add(whoosh(0.5, 300, 3000, 0.35), MAC)              # desktop fades in
+for tc in (MAC + 1.17, MAC + 3.047):                # cursor clicks: dock icon, Open Folder
+    add(click(), tc, 0.8)
+for i in range(2):                                  # dock icon launch bounces
+    add(pluck(note(3 + 7 * i)), MAC + 1.2 + i * 0.3375, 0.3)
+add(impact(), LAUNCH, 0.5)                          # app window opens
+add(whoosh(0.45, 500, 5000, 0.45), LAUNCH - 0.05)
+add(riser(DECK - (MAC + 2.2)), MAC + 2.2, 0.7)
+add(whoosh(0.5, 300, 5000, 0.5), MAC + 3.1)         # window goes full screen
+add(impact(), DECK, 0.9)                            # drop into swiping
+for t0 in (4.05, 4.75, 5.35, 7.05):            # card swipes
+    add(whoosh(0.55, 600, 7000), v(t0) - 0.15)
+for tk in (3.9, 4.6, 5.2, 6.9):                # arrow key presses
+    add(click(), v(tk), 0.6)
+add(whoosh(0.45, 1500, 5000, 0.35), v(5.95))      # duplicate twin slides out
+add(whoosh(0.5, 5000, 400, 0.55), v(6.6))         # twin dropped in trash
+add(impact(), PAYOFF, 1.0)                        # "GB freed"
 for i in range(14):                            # confetti sparkle
-    add(pluck(note(19 + [0, 4, 7, 12][i % 4]), 0.12), 7.75 + i * 0.045, 0.2)
-add(supersaw(CHORDS[0][1] + [note(0)], 1.1, 3000), 8.9, 0.6)  # end card chord
-add(impact(), 8.9, 0.6)
+    add(pluck(note(19 + [0, 4, 7, 12][i % 4]), 0.12), v(7.75) + i * 0.06, 0.2)
+add(supersaw(CHORDS[0][1] + [note(0)], DUR - END, 3000) * np.exp(-t_arr(DUR - END) * 1.2), END, 0.6)  # end card chord
+add(impact(), END, 0.6)
 
 # ---------- master ----------
 mix = np.tanh(mix * 1.2)
-fade = np.where(tt > 9.4, np.clip((10 - tt) / 0.6, 0, 1), 1.0)
+fade = np.where(tt > DUR - 0.8, np.clip((DUR - tt) / 0.8, 0, 1), 1.0)
 mix *= fade
 mix /= np.max(np.abs(mix)) / 0.89
 out = (mix * 32767).astype(np.int16)
