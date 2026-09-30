@@ -1,0 +1,334 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Pinder Promo</title>
+<style>
+  @font-face { font-family: 'Bricolage Grotesque'; font-weight: 400; src: url(fonts/bricolage-400.ttf); }
+  @font-face { font-family: 'Bricolage Grotesque'; font-weight: 600; src: url(fonts/bricolage-600.ttf); }
+  @font-face { font-family: 'Bricolage Grotesque'; font-weight: 800; src: url(fonts/bricolage-800.ttf); }
+  @font-face { font-family: 'JetBrains Mono'; font-weight: 500; src: url(fonts/jbmono-500.ttf); }
+  @font-face { font-family: 'JetBrains Mono'; font-weight: 700; src: url(fonts/jbmono-700.ttf); }
+  :root {
+    --bg: #0e0d0c;
+    --text: #fbf6ee;
+    --muted: #9c948a;
+    --keep: #34c759;
+    --del: #ff3b30;
+    --warn: #ff9f0a;
+    --m1: #f9a634;
+    --m2: #e7473f;
+    --m3: #2fd8c9;
+    --display: 'Bricolage Grotesque', serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; color: var(--text); font-family: var(--display); }
+  .abs { position: absolute; }
+  .blob { position: absolute; width: 1100px; height: 1100px; border-radius: 50%; filter: blur(110px); opacity: .42; }
+  #grain { position: absolute; inset: 0; opacity: .07; background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 4px 4px; }
+  #vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.65)); }
+
+  .tile { position: absolute; width: 150px; height: 150px; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+  .tile svg, .card .photo svg { width: 100%; height: 100%; display: block; }
+
+  #headline { left: 0; right: 0; top: 70px; text-align: center; font-weight: 800; font-size: 92px; letter-spacing: -3px; }
+  #headline .num { font-variant-numeric: tabular-nums; color: var(--warn); }
+  #sub { left: 0; right: 0; top: 190px; text-align: center; font-size: 38px; color: var(--muted); font-weight: 400; }
+  #storage { left: 560px; top: 950px; width: 800px; }
+  #storage .label { font-family: var(--mono); font-size: 24px; display: flex; justify-content: space-between; margin-bottom: 12px; color: var(--muted); }
+  #storage .label b { color: var(--del); }
+  #storage .track { height: 18px; border-radius: 99px; background: rgba(255,255,255,.1); overflow: hidden; }
+  #storage .fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--warn), var(--del)); }
+
+  #logo { left: 0; top: 0; width: 1920px; height: 1080px; display: flex; flex-direction: column; align-items: center; justify-content: center; transform-origin: 0 0; }
+  #logo .word { font-size: 230px; font-weight: 800; letter-spacing: -10px; line-height: 1; }
+  #logo .word .dot { color: var(--m2); }
+  #logo .tag { font-size: 52px; font-weight: 400; color: var(--muted); margin-top: 10px; }
+  #logo .tag em { font-style: normal; color: var(--text); font-weight: 600; }
+
+  .card { position: absolute; left: 680px; top: 170px; width: 560px; height: 740px; border-radius: 34px; background: #1b1917; padding: 16px; box-shadow: 0 40px 90px rgba(0,0,0,.6); transform-origin: 50% 110%; }
+  .card .photo { width: 100%; height: 630px; border-radius: 22px; overflow: hidden; position: relative; }
+  .card .meta { font-family: var(--mono); font-size: 22px; color: var(--muted); padding: 22px 8px 0; display: flex; justify-content: space-between; }
+  .stamp { position: absolute; top: 44px; padding: 10px 26px; border: 7px solid; border-radius: 16px; font-weight: 800; font-size: 72px; letter-spacing: 2px; opacity: 0; background: rgba(0,0,0,.25); }
+  .stamp.keep { left: 40px; color: var(--keep); border-color: var(--keep); transform: rotate(-14deg); }
+  .stamp.trash { right: 40px; color: var(--del); border-color: var(--del); transform: rotate(14deg); }
+  .badge { position: absolute; left: 24px; bottom: 24px; background: var(--warn); color: #1a1000; font-family: var(--mono); font-weight: 700; font-size: 22px; padding: 8px 16px; border-radius: 99px; opacity: 0; }
+
+  #caption { left: 110px; top: 400px; width: 520px; }
+  #caption .line { position: absolute; left: 0; top: 0; width: 540px; }
+  #caption .k { font-family: var(--mono); font-size: 26px; color: var(--muted); letter-spacing: 2px; margin-bottom: 14px; }
+  #caption .big { font-size: 84px; font-weight: 800; letter-spacing: -3px; line-height: .95; }
+
+  #c3 { left: 0; right: 0; top: 36px; text-align: center; z-index: 60; }
+  #c3 .k { font-family: var(--mono); font-size: 24px; color: var(--muted); letter-spacing: 2px; margin-bottom: 6px; }
+  #c3 .big { font-size: 72px; font-weight: 800; letter-spacing: -2px; }
+  #keys { left: 1340px; top: 820px; display: flex; gap: 26px; font-family: var(--mono); }
+  .key { width: 110px; height: 96px; border-radius: 20px; border: 3px solid rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center; font-size: 46px; font-weight: 700; background: rgba(255,255,255,.04); }
+  #freed { left: 1340px; top: 390px; }
+  #freed .k { font-family: var(--mono); font-size: 26px; color: var(--muted); letter-spacing: 2px; }
+  #freed .v { font-size: 120px; font-weight: 800; letter-spacing: -4px; color: var(--keep); font-variant-numeric: tabular-nums; }
+
+  #finale { z-index: 80; left: 0; right: 0; top: 330px; text-align: center; }
+  #finale .v { font-size: 250px; font-weight: 800; letter-spacing: -10px; color: var(--keep); line-height: 1; font-variant-numeric: tabular-nums; }
+  #finale .k { font-size: 56px; font-weight: 600; margin-top: 10px; }
+  .conf { position: absolute; width: 18px; height: 30px; border-radius: 4px; }
+
+  #end { left: 0; top: 0; width: 1920px; height: 1080px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  #end .word { font-size: 200px; font-weight: 800; letter-spacing: -9px; line-height: 1; }
+  #end .word .dot { color: var(--m2); }
+  #end .tag { font-size: 58px; font-weight: 600; margin-top: 24px; letter-spacing: -1px; }
+  #end .pills { display: flex; gap: 22px; margin-top: 48px; font-family: var(--mono); font-size: 26px; }
+  #end .pill { padding: 14px 26px; border-radius: 99px; border: 2px solid rgba(255,255,255,.2); color: var(--muted); }
+  #end .pill b { color: var(--text); }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="blob" id="b1" style="background: radial-gradient(circle, var(--m1), transparent 70%)"></div>
+  <div class="blob" id="b2" style="background: radial-gradient(circle, var(--m2), transparent 70%)"></div>
+  <div class="blob" id="b3" style="background: radial-gradient(circle, var(--m3), transparent 70%)"></div>
+  <div id="grain"></div>
+
+  <div id="tiles"></div>
+  <div class="abs" id="headline"><span class="num">0</span> photos.</div>
+  <div class="abs" id="sub">No time to sort them. No space left.</div>
+  <div class="abs" id="storage">
+    <div class="label"><span>STORAGE</span><b>ALMOST FULL</b></div>
+    <div class="track"><div class="fill"></div></div>
+  </div>
+
+  <div class="abs" id="logo">
+    <div class="word">Pinder<span class="dot">.</span></div>
+    <div class="tag">Swipe your photos. <em>Keep the good ones.</em></div>
+  </div>
+
+  <div class="abs" id="caption">
+    <div class="line" id="c1"><div class="k">SWIPE RIGHT →</div><div class="big" style="color:var(--keep)">Keep what<br>matters.</div></div>
+    <div class="line" id="c2"><div class="k">← SWIPE LEFT</div><div class="big" style="color:var(--del)">Trash the<br>clutter.</div></div>
+    
+  </div>
+
+  <div class="abs" id="c3"><div class="k">AUTOMATIC</div><div class="big">Duplicates? <span style="color:var(--warn)">Found for you.</span></div></div>
+  <div id="deck"></div>
+
+  <div class="abs" id="freed"><div class="k">SPACE FREED</div><div class="v">0.0 GB</div></div>
+  <div class="abs" id="keys"><div class="key" id="kl">←</div><div class="key" id="kr">→</div></div>
+
+  <div id="confetti"></div>
+  <div class="abs" id="finale"><div class="v">18.4 GB</div><div class="k">freed in minutes.</div></div>
+
+  <div class="abs" id="end">
+    <div class="word">Pinder<span class="dot">.</span></div>
+    <div class="tag">Clean up your photos, one swipe at a time.</div>
+    <div class="pills">
+      <div class="pill"><b>Photos</b>, videos &amp; PDFs</div>
+      <div class="pill">Nothing deleted until <b>you confirm</b></div>
+    </div>
+  </div>
+  <div id="vignette"></div>
+</div>
+
+<script>
+// ---------- photo art ----------
+const scenes = {
+  sunset: `<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="gs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff5e62"/><stop offset=".6" stop-color="#ffb347"/></linearGradient></defs><rect width="100" height="100" fill="url(#gs)"/><circle cx="50" cy="60" r="14" fill="#fff1b8"/><path d="M0 70 Q25 55 50 68 T100 62 V100 H0Z" fill="#5a2340"/><path d="M0 82 Q30 72 60 84 T100 80 V100 H0Z" fill="#2a1030"/></svg>`,
+  mountain: `<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><rect width="100" height="100" fill="#8fd3f4"/><circle cx="78" cy="22" r="8" fill="#fff"/><path d="M-5 85 L30 30 L50 60 L68 38 L105 85Z" fill="#3b5a7a"/><path d="M30 30 L38 42 L24 42Z M68 38 L74 47 L62 47Z" fill="#fff"/><rect y="80" width="100" height="20" fill="#2e7d4f"/></svg>`,
+  beach: `<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><rect width="100" height="100" fill="#7fdbff"/><rect y="50" width="100" height="22" fill="#1e90c8"/><path d="M0 70 Q50 62 100 70 V100 H0Z" fill="#f5deb3"/><circle cx="22" cy="24" r="9" fill="#fff6a0"/><path d="M72 72 Q74 50 70 38" stroke="#6b4423" stroke-width="2.5" fill="none"/><path d="M70 38 q-12 -2 -18 6 M70 38 q12 -4 18 4 M70 38 q-6 -10 -16 -8 M70 38 q8 -10 16 -6" stroke="#2e9e4f" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`,
+  city: `<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><rect width="100" height="100" fill="#1b1340"/><circle cx="80" cy="18" r="6" fill="#ffe9a8"/><g fill="#3a2c6e"><rect x="5" y="45" width="16" height="55"/><rect x="24" y="30" width="14" height="70"/><rect x="41" y="52" width="18" height="48"/><rect x="62" y="38" width="12" height="62"/><rect x="77" y="55" width="20" height="45"/></g><g fill="#ffd166"><rect x="9" y="52" width="3" height="3"/><rect x="28" y="38" width="3" height="3"/><rect x="31" y="50" width="3" height="3"/><rect x="46" y="60" width="3" height="3"/><rect x="66" y="45" width="3" height="3"/><rect x="82" y="64" width="3" height="3"/><rect x="14" y="66" width="3" height="3"/></g></svg>`,
+  dog: `<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><rect width="100" height="100" fill="#ffcf70"/><rect y="75" width="100" height="25" fill="#7bc96f"/><ellipse cx="50" cy="60" rx="24" ry="22" fill="#b9793e"/><ellipse cx="30" cy="48" rx="8" ry="14" fill="#7a4a22"/><ellipse cx="70" cy="48" rx="8" ry="14" fill="#7a4a22"/><circle cx="42" cy="56" r="3" fill="#1a1a1a"/><circle cx="58" cy="56" r="3" fill="#1a1a1a"/><ellipse cx="50" cy="66" rx="5" ry="3.5" fill="#1a1a1a"/></svg>`,
+  blurry: `<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><defs><filter id="bl"><feGaussianBlur stdDeviation="6"/></filter></defs><rect width="100" height="100" fill="#6b6259"/><g filter="url(#bl)"><circle cx="35" cy="45" r="22" fill="#c9a27e"/><rect x="55" y="20" width="35" height="60" fill="#3d3834"/><circle cx="70" cy="80" r="15" fill="#e8d9c4"/></g></svg>`,
+  screenshot: `<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><rect width="100" height="100" fill="#f4f4f6"/><rect x="0" y="0" width="100" height="10" fill="#dedee4"/><rect x="8" y="18" width="50" height="6" rx="2" fill="#b0b0bc"/><rect x="8" y="30" width="84" height="4" rx="2" fill="#d4d4dc"/><rect x="8" y="38" width="76" height="4" rx="2" fill="#d4d4dc"/><rect x="8" y="46" width="80" height="4" rx="2" fill="#d4d4dc"/><rect x="8" y="58" width="84" height="26" rx="3" fill="#e2e2ea"/><rect x="8" y="88" width="40" height="4" rx="2" fill="#d4d4dc"/></svg>`,
+};
+const sceneKeys = Object.keys(scenes);
+
+// ---------- helpers ----------
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, p) => a + (b - a) * p;
+const eOut = (p) => 1 - Math.pow(1 - p, 3);
+const eIn = (p) => p * p * p;
+const eInOut = (p) => (p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+const eBack = (p) => { const c = 1.9; return 1 + (c + 1) * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+let seed = 7;
+const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+const $ = (s) => document.querySelector(s);
+const set = (el, o, tf) => { el.style.opacity = o; if (tf !== undefined) el.style.transform = tf; };
+
+// ---------- build tiles ----------
+const COLS = 10, ROWS = 4, TS = 150, GAP = 20;
+const gridW = COLS * TS + (COLS - 1) * GAP, gridH = ROWS * TS + (ROWS - 1) * GAP;
+const gx = (1920 - gridW) / 2, gy = 290;
+const tiles = [];
+for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+  const el = document.createElement('div');
+  el.className = 'tile';
+  el.innerHTML = scenes[sceneKeys[Math.floor(rnd() * sceneKeys.length)]];
+  const x = gx + c * (TS + GAP), y = gy + r * (TS + GAP);
+  el.style.left = x + 'px'; el.style.top = y + 'px';
+  $('#tiles').appendChild(el);
+  const dist = Math.hypot(c - COLS / 2, r - ROWS / 2);
+  tiles.push({ el, x, y, delay: dist * 0.09 + rnd() * 0.12, rot: (rnd() - .5) * 30 });
+}
+
+// ---------- build deck ----------
+// order: top card first
+const deckDef = [
+  { scene: 'sunset', meta: ['IMG_2041.jpg', '4.2 MB'], dir: 1, t0: 3.95 },
+  { scene: 'blurry', meta: ['IMG_2042.jpg', '3.9 MB'], dir: -1, t0: 4.75 },
+  { scene: 'screenshot', meta: ['Screenshot 14.png', '2.1 MB'], dir: -1, t0: 5.35 },
+  { scene: 'beach', meta: ['IMG_3310.jpg', '5.0 MB'], dir: 1, t0: 7.05, dup: true },
+  { scene: 'dog', meta: ['IMG_3388.jpg', '4.6 MB'], dir: 0 },
+];
+const cards = deckDef.map((d, i) => {
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.innerHTML = `<div class="photo">${scenes[d.scene]}<div class="stamp keep">KEEP</div><div class="stamp trash">TRASH</div>${d.dup ? '<div class="badge">POSSIBLE DUPLICATE</div>' : ''}</div><div class="meta"><span>${d.meta[0]}</span><span>${d.meta[1]}</span></div>`;
+  el.style.zIndex = 50 - i;
+  $('#deck').appendChild(el);
+  return { ...d, el, i };
+});
+// duplicate twin
+const twin = document.createElement('div');
+twin.className = 'card';
+twin.innerHTML = `<div class="photo">${scenes.beach}<div class="stamp trash">TRASH</div><div class="badge" style="opacity:1">DUPLICATE COPY</div></div><div class="meta"><span>IMG_3310 (1).jpg</span><span>5.0 MB</span></div>`;
+twin.style.zIndex = 49;
+$('#deck').appendChild(twin);
+
+// ---------- confetti ----------
+const confColors = ['#34c759', '#f9a634', '#e7473f', '#2fd8c9', '#fbf6ee', '#ff6b9d'];
+const conf = Array.from({ length: 110 }, () => {
+  const el = document.createElement('div');
+  el.className = 'conf';
+  el.style.background = confColors[Math.floor(rnd() * confColors.length)];
+  $('#confetti').appendChild(el);
+  const a = rnd() * Math.PI * 2, v = 700 + rnd() * 1300;
+  return { el, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 700, spin: (rnd() - .5) * 1400, s: .6 + rnd() * .8 };
+});
+
+// ---------- render(t) ----------
+function render(t) {
+  // background drift
+  $('#b1').style.transform = `translate(${-300 + Math.sin(t * .5) * 120}px, ${-400 + Math.cos(t * .4) * 80}px)`;
+  $('#b2').style.transform = `translate(${1200 + Math.cos(t * .45) * 140}px, ${300 + Math.sin(t * .5) * 100}px)`;
+  $('#b3').style.transform = `translate(${400 + Math.sin(t * .35) * 160}px, ${600 + Math.cos(t * .3) * 90}px)`;
+
+  // ===== Scene 1: the problem (0 - 2.5) =====
+  const collapse = prog(t, 2.2, 2.9);
+  tiles.forEach((tl) => {
+    const p = prog(t, 0.05 + tl.delay, 0.55 + tl.delay);
+    const s = p === 0 ? 0 : eBack(p);
+    const cp = eIn(collapse);
+    const dx = lerp(0, 960 - (tl.x + TS / 2), cp), dy = lerp(0, 540 - (tl.y + TS / 2), cp);
+    const jitter = Math.sin(t * 9 + tl.delay * 40) * 2 * prog(t, 1.4, 2.2);
+    set(tl.el, p > 0 ? 1 - prog(t, 2.6, 2.9) : 0,
+      `translate(${dx + jitter}px, ${dy}px) rotate(${lerp((1 - p) * tl.rot, tl.rot * 2, cp)}deg) scale(${s * lerp(1, .3, cp)})`);
+  });
+  const n = Math.round(eOut(prog(t, 0.2, 1.7)) * 12480);
+  $('#headline .num').textContent = n.toLocaleString('en-US');
+  const hIn = eOut(prog(t, 0.1, 0.5)), hOut = prog(t, 2.1, 2.4);
+  set($('#headline'), hIn * (1 - hOut), `translateY(${(1 - hIn) * -40 - hOut * 40}px)`);
+  const sIn = eOut(prog(t, 0.7, 1.1));
+  set($('#sub'), sIn * (1 - hOut), `translateY(${(1 - sIn) * 20}px)`);
+  const stIn = eOut(prog(t, 0.5, 0.9));
+  set($('#storage'), stIn * (1 - hOut), `translateY(${(1 - stIn) * 30}px)`);
+  $('#storage .fill').style.width = (eOut(prog(t, 0.6, 1.9)) * 97) + '%';
+  $('#storage .label b').style.opacity = t > 1.6 ? (Math.floor(t * 6) % 2 ? 1 : .35) : 0;
+
+  // ===== Scene 2: logo reveal (2.6 - 3.8) =====
+  const lIn = prog(t, 2.65, 3.1), lMove = eInOut(prog(t, 3.55, 4.0));
+  const ls = (lIn === 0 ? 0 : eBack(lIn));
+  const logo = $('#logo');
+  logo.style.opacity = lIn > 0 ? 1 - prog(t, 3.75, 3.95) : 0;
+  logo.style.transformOrigin = '960px 540px';
+  logo.style.transform = `translateY(${lMove * -380}px) scale(${lerp(.6 + .4 * ls, .45, lMove)})`;
+  $('#logo .tag').style.opacity = eOut(prog(t, 2.95, 3.3));
+
+  // ===== Scene 3: swiping (3.8 - 7.6) =====
+  const deckIn = eOut(prog(t, 3.6, 4.0));
+  const deckOut = prog(t, 7.4, 7.7);
+  cards.forEach((c) => {
+    let x = 0, rot = 0, o = deckIn * (1 - deckOut);
+    // stack depth: count unswiped cards above
+    const above = cards.filter((o2) => o2.i < c.i && !(o2.t0 !== undefined && t > o2.t0 + 0.45)).length;
+    const depth = Math.min(above, 3);
+    let y = (1 - deckIn) * 500 + depth * 22;
+    let sc = 1 - depth * .045;
+    const stampKeep = c.el.querySelector('.stamp.keep'), stampTrash = c.el.querySelector('.stamp.trash');
+    stampKeep.style.opacity = 0; stampTrash.style.opacity = 0;
+    if (c.t0 !== undefined) {
+      const lean = eOut(prog(t, c.t0 - 0.3, c.t0));
+      const fly = eIn(prog(t, c.t0, c.t0 + 0.45));
+      x = c.dir * (lean * 70 + fly * 1500);
+      rot = c.dir * (lean * 6 + fly * 28);
+      (c.dir > 0 ? stampKeep : stampTrash).style.opacity = lean;
+      o *= 1 - prog(t, c.t0 + 0.1, c.t0 + 0.4);
+    }
+    if (c.dup) c.el.querySelector('.badge').style.opacity = eOut(prog(t, 5.85, 6.1));
+    c.el.style.opacity = o;
+    c.el.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg) scale(${sc})`;
+  });
+  // twin: slides out from beneath beach card, then gets trashed
+  const tOut = eOut(prog(t, 6.0, 6.35));
+  const tTrash = prog(t, 6.6, 6.95);
+  const twinStamp = eOut(prog(t, 6.35, 6.6));
+  twin.querySelector('.stamp.trash').style.opacity = twinStamp;
+  twin.style.opacity = t > 5.95 ? 1 - prog(t, 6.8, 6.95) : 0;
+  twin.style.transform = `translate(${tOut * 300}px, ${60 + eIn(tTrash) * 900}px) rotate(${tOut * 4 + eIn(tTrash) * 30}deg) scale(${.86 - tTrash * .3})`;
+  // shift beach card left while twin shown
+  const beach = cards[3];
+  const shift = eOut(prog(t, 6.0, 6.35)) * (1 - eInOut(prog(t, 6.7, 7.0)));
+  if (t < 7.0) beach.el.style.transform = beach.el.style.transform.replace(/^translate\(([-\d.]+)px, ([-\d.]+)px\)/, (m, v, w) => `translate(${+v - shift * 300}px, ${+w + shift * 60}px)`) + ` scale(${1 - shift * .14})`;
+  // hide the card underneath while the pair is side by side
+  cards[4].el.style.opacity = +cards[4].el.style.opacity * (1 - shift);
+
+  // captions
+  const cap = (el, a, b) => {
+    const pi = eOut(prog(t, a, a + 0.3)), po = prog(t, b - 0.2, b);
+    set(el, pi * (1 - po), `translateY(${(1 - pi) * 40 - po * 30}px)`);
+  };
+  cap($('#c1'), 3.7, 4.45); cap($('#c2'), 4.45, 5.85); cap($('#c3'), 5.85, 7.35);
+  // caption panel slides away while twin occupies right
+  // keys
+  const keyPress = (el, times, color) => {
+    let g = 0;
+    times.forEach((tt) => { g = Math.max(g, 1 - Math.abs(t - tt) / 0.25); });
+    g = clamp(g);
+    el.style.borderColor = g > 0 ? color : 'rgba(255,255,255,.18)';
+    el.style.background = g > 0 ? color.replace('rgb', 'rgba').replace(')', `,${.25 * g})`) : 'rgba(255,255,255,.04)';
+    el.style.transform = `scale(${1 - g * .1})`;
+  };
+  const panelIn = eOut(prog(t, 3.7, 4.1)), panelOut = prog(t, 5.85, 6.05), panelBack = eOut(prog(t, 6.9, 7.1));
+  const pVis = panelIn * (1 - panelOut + panelBack) * (1 - deckOut);
+  set($('#keys'), pVis, `translateX(${(1 - panelIn) * 60}px)`);
+  set($('#freed'), pVis, `translateX(${(1 - panelIn) * 60}px)`);
+  keyPress($('#kr'), [3.8, 6.9], 'rgb(52,199,89)');
+  keyPress($('#kl'), [4.6, 5.2], 'rgb(255,59,48)');
+  const freed = 3.9 * eOut(prog(t, 4.95, 5.3)) + 2.1 * eOut(prog(t, 5.55, 5.9)) + 5.0 * eOut(prog(t, 6.75, 7.1));
+  $('#freed .v').textContent = freed.toFixed(1) + ' MB';
+
+  // ===== Scene 4: payoff (7.6 - 8.9) =====
+  const fIn = prog(t, 7.6, 8.0), fOut = prog(t, 8.7, 8.95);
+  set($('#finale'), (fIn > 0 ? 1 : 0) * (1 - fOut), `scale(${(fIn === 0 ? .5 : .5 + .5 * eBack(fIn)) * (1 + fOut * .15)})`);
+  const gb = eOut(prog(t, 7.6, 8.5)) * 18.4;
+  $('#finale .v').textContent = gb.toFixed(1) + ' GB';
+  const ct = t - 7.75;
+  conf.forEach((c) => {
+    if (ct <= 0 || ct > 2) { c.el.style.opacity = 0; return; }
+    const x = 960 + c.vx * ct * .8, y = 540 + c.vy * ct * .8 + 1400 * ct * ct;
+    c.el.style.opacity = 1 - prog(t, 8.9, 9.3);
+    c.el.style.transform = `translate(${x}px, ${y}px) rotate(${c.spin * ct}deg) scale(${c.s})`;
+  });
+
+  // ===== Scene 5: end card (8.9 - 10) =====
+  const eIn2 = prog(t, 8.9, 9.3);
+  set($('#end'), eOut(eIn2), `translateY(${(1 - eOut(eIn2)) * 40}px)`);
+  const pillsIn = eOut(prog(t, 9.2, 9.55));
+  set($('#end .pills'), pillsIn, `translateY(${(1 - pillsIn) * 20}px)`);
+}
+window.render = render;
+render(0);
+</script>
+</body>
+</html>
